@@ -82,16 +82,20 @@ void query() {
 	char aName[18] = { 0 };
 	char aTime[20] = { 0 };
 	Card* pCard = NULL;
+	int nIndex = 0;
+	int i = 0;
 	printf("请输入要查询的卡号：");
 	scanf("%s", aName);
-	pCard = queryCard(aName); //调用查询卡函数获取卡信息
-	//将时间转换为字符串格式
-	timeToString(pCard->tLast, aTime);
+	pCard = queryCards(aName, &nIndex);
+	if (pCard == NULL || nIndex == 0) { printf("未找到卡号为%s的卡！\n", aName); return; }
+	timeToString(pCard[0].tLast, aTime);
 
 	if (pCard != NULL) {
 		printf("-----查询到的卡信息如下-----\n");
-		printf("卡号\t密码\t卡状态\t余额\t累计使用\t使用次数\t上次使用时间\n");
-		printf("%s\t%s\t%d\t%.1f\t%.2f\t\t%d\t\t%s\n", pCard->aName, pCard->aPwd, pCard->nStatus, pCard->fBalance, pCard->fTotalUse, pCard->nUseCount, aTime);
+		for (i = 0;i < nIndex;i++) {
+			printf("卡号\t密码\t卡状态\t余额\t累计使用\t使用次数\t上次使用时间\n");
+			printf("%s\t%s\t%d\t%.1f\t%.2f\t\t%d\t\t%s\n", pCard[i].aName, pCard[i].aPwd, pCard[i].nStatus, pCard[i].fBalance, pCard[i].fTotalUse, pCard[i].nUseCount, aTime);
+		}	
 	}
 	else {
 		printf("未找到卡号为%s的卡！\n", aName);

@@ -1,5 +1,7 @@
-#include<time.h>
+#ifndef MODEL_H
+#define MODEL_H
 
+#include <time.h>
 typedef struct Card
 {
 	char aName[10];   //¿¨ºÅ
@@ -13,3 +15,9 @@ typedef struct Card
 	float fBalance;   //Óà¶î
 	int nDel;		  //É¾³ý±êÖ¾£¨0-Î´É¾³ý£»1-ÒÑÉ¾³ý£©
 }Card;
+
+typedef struct CardNode {
+	Card data;
+	struct CardNode* next;
+}CardNode,*lpCardNode;
+#endif 

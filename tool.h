@@ -1,2 +1,4 @@
 #pragma once
-void timeToString(time_t t, char* pBur);
+#include <time.h>
+
+void timeToString(time_t t, char* pBuf);
