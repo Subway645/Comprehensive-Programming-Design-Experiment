@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include"model.h"
 #include"global.h"
-
+#include"card_file.h"
 Card aCard[50];  //卡信息结构体
 int nCount = 0;  //记录卡的数量
 
@@ -20,25 +20,7 @@ int initCardList() {
 	return 0;
 }
 int addCard(Card card) {
-	lpCardNode cur = NULL;
-
-	if (cardList == NULL) {
-		if (!initCardList()) return 0;
-	}
-	//将数据保存到结点中
-	cur = (lpCardNode)malloc(sizeof(CardNode));
-	if (cur != NULL) {
-		cur->data = card;
-		cur->next = NULL;
-		//遍历链表找到最后一个结点（使用临时指针，避免修改全局头指针）
-		lpCardNode p = cardList;
-		while (p->next != NULL) {
-			p = p->next;
-		}
-		p->next = cur;
-		return 1;
-	}
-	return 0;
+	return saveCard(&card, CARDPATH);
 }
 
 Card* queryCard(const char* aName) {
