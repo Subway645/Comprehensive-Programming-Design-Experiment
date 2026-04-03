@@ -1,8 +1,16 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
 #include "model.h"
 #include "global.h"
 #include "time.h"
+#include"tool.h"
+
+#define CARDCHARNUM 256
+
+Card praseCard(char* pBuf);
+
 int saveCard(const Card* pcard, const char* pPath) {
 	FILE* fp = NULL;
 	//打开文件
@@ -26,4 +34,72 @@ int saveCard(const Card* pcard, const char* pPath) {
 	//关闭文件
 	fclose(fp);
 	return 1;
+}
+
+int readCard(Card* pCard, const char* pPath) {
+	FILE* fp = NULL;
+	char aBuf[CARDCHARNUM] = { 0 };
+	int i = 0;
+	//打开文件
+	fp = fopen(pPath, "r");
+	if(fp == NULL) {
+		return 0;
+	}
+	//读取文件
+	while (fgets(aBuf, CARDCHARNUM, fp) != NULL) {
+		if(strlen(aBuf)>0){
+			pCard[i] = praseCard(aBuf);
+			i++;
+		}
+	}
+	//关闭文件
+	fclose(fp);
+	return 1;
+}
+
+Card praseCard(char* pBuf) {
+	Card card;
+	const char* delim = "##";//分隔符
+	char* buf = NULL;
+	char* str = NULL;
+	char flag[10][20] = { 0 };//存储分割后的字符串
+	int index = 0;
+	buf = pBuf;//第一次调用strtok时，buf为解析字符串
+	while ((str = strtok(buf, delim)) != NULL) {
+		strcpy(flag[index], str);
+		index++;
+		buf = NULL;//第二次调用strok时，buf为NULL
+	}
+	strcpy(card.aName, flag[0]);
+	strcpy(card.aPwd, flag[1]);
+	card.nStatus = atoi(flag[2]);
+	card.tStart = stringToTime(flag[3]);
+	card.tEnd = stringToTime(flag[4]);
+	card.fTotalUse = atof(flag[5]);
+	card.tLast = stringToTime(flag[6]);
+	card.nUseCount = atoi(flag[7]);
+	card.fBalance = atof(flag[8]);
+	card.nDel = atoi(flag[9]);
+
+	return card;
+}
+
+int getCardCount(const char* pPath) {
+	FILE* fp = NULL;
+	char aBuf[CARDCHARNUM] = { 0 };
+	int nCount = 0;
+	//打开文件
+	fp = fopen(pPath, "r");
+	if (fp == NULL) {
+		return 0;
+	}
+	//读取文件
+	while (fgets(aBuf, CARDCHARNUM, fp) != NULL) {
+		if (strlen(aBuf) > 0) {
+			nCount++;
+		}
+	}
+	//关闭文件
+	fclose(fp);
+	return nCount;
 }

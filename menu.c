@@ -88,11 +88,11 @@ void query() {
 	scanf("%s", aName);
 	pCard = queryCards(aName, &nIndex);
 	if (pCard == NULL || nIndex == 0) { printf("未找到卡号为%s的卡！\n", aName); return; }
-	timeToString(pCard[0].tLast, aTime);
 
 	if (pCard != NULL) {
 		printf("-----查询到的卡信息如下-----\n");
 		for (i = 0;i < nIndex;i++) {
+			timeToString(pCard[i].tLast, aTime);
 			printf("卡号\t密码\t卡状态\t余额\t累计使用\t使用次数\t上次使用时间\n");
 			printf("%s\t%s\t%d\t%.1f\t%.2f\t\t%d\t\t%s\n", pCard[i].aName, pCard[i].aPwd, pCard[i].nStatus, pCard[i].fBalance, pCard[i].fTotalUse, pCard[i].nUseCount, aTime);
 		}	

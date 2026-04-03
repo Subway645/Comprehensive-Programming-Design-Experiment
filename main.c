@@ -1,7 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<stdio.h>
 #include"model.h"
+#include"card_service.h"
 int main() {
+	getCard(); //程序启动时加载卡数据到链表
 	int choice;
 	do {
 		outputmenu();  //循环输出菜单
