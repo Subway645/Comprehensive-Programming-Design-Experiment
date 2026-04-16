@@ -1,0 +1,46 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include"model.h"
+#include"card_service.h"
+#include"menu.h"
+int main() {
+	getCard(); //程序启动时加载卡数据到链表
+	int choice;
+	do {
+		outputmenu();  //循环输出菜单
+		scanf("%d", &choice);
+		switch (choice)
+		{
+		case 1:
+			add();
+			break;
+		case 2:
+			query();
+			break;
+		case 3:
+			logon();
+			break;
+		case 4:
+			settle();
+			break;
+		case 5:
+			printf("----------充值----------\n");
+			break;
+		case 6:
+			printf("----------退费----------\n");
+			break;
+		case 7:
+			printf("----------查询统计----------\n");
+			break;
+		case 8:
+			printf("----------注销卡----------\n");
+			break;
+		case 0:
+			printf("----------退出----------\n");
+			break;
+		default:
+			printf("输入错误，请重新输入！\n");
+		}
+	} while (choice != 0);
+		return 0;
+}
