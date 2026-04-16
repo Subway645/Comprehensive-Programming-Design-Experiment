@@ -92,33 +92,50 @@ int getCardCount(const char* pPath) {
 }
 
 int updateCard(const Card* pCard, const char* pPath, int nIndex) {
-	FILE* fp = NULL;
-	int nLine = 0;
+	FILE* fpIn = NULL;
+	FILE* fpOut = NULL;
 	char aBuf[CARDCHARNUM] = { 0 };
-	long lPosition = 0;
-	fp = fopen(pPath, "r+");
-	if (fp == NULL) {
+	char tempPath[256] = { 0 };
+
+	fpIn = fopen(pPath, "r");
+	if (fpIn == NULL) {
 		return 0;
 	}
-	while (fgets(aBuf, CARDCHARNUM, fp) != NULL) {
+
+	// 生成临时文件名
+	strcpy(tempPath, pPath);
+	strcat(tempPath, ".tmp");
+	fpOut = fopen(tempPath, "w");
+	if (fpOut == NULL) {
+		fclose(fpIn);
+		return 0;
+	}
+
+	int nLine = 0;
+	while (fgets(aBuf, CARDCHARNUM, fpIn) != NULL) {
 		if (nLine == nIndex) {
-			lPosition = ftell(fp) - strlen(aBuf);
-			break;
+			char StartTime[20], EndTime[20], LastTime[20];
+			timeToString(pCard->tStart, StartTime);
+			timeToString(pCard->tEnd, EndTime);
+			timeToString(pCard->tLast, LastTime);
+			fprintf(fpOut, "%s##%s##%d##%s##%s##%.1f##%s##%d##%.1f##%d\n",
+				pCard->aName, pCard->aPwd, pCard->nStatus, StartTime, EndTime,
+				pCard->fTotalUse, LastTime, pCard->nUseCount, pCard->fBalance, pCard->nDel);
+		} else {
+			fprintf(fpOut, "%s", aBuf);
 		}
 		nLine++;
 	}
-	if (nLine != nIndex) {
-		fclose(fp);
+
+	fclose(fpIn);
+	fclose(fpOut);
+
+	if (nLine <= nIndex) {
+		remove(tempPath);
 		return 0;
 	}
-	fseek(fp, lPosition, 0);
-	char StartTime[20], EndTime[20], LastTime[20];
-	timeToString(pCard->tStart, StartTime);
-	timeToString(pCard->tEnd, EndTime);
-	timeToString(pCard->tLast, LastTime);
-	fprintf(fp, "%s##%s##%d##%s##%s##%.1f##%s##%d##%.1f##%d\n",
-		pCard->aName, pCard->aPwd, pCard->nStatus, StartTime, EndTime,
-		pCard->fTotalUse, LastTime, pCard->nUseCount, pCard->fBalance, pCard->nDel);
-	fclose(fp);
+
+	remove(pPath);
+	rename(tempPath, pPath);
 	return 1;
 }
