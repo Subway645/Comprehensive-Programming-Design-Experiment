@@ -1,141 +1,71 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
+#include <stdio.h>
 #include "model.h"
 #include "global.h"
-#include "time.h"
-#include"tool.h"
 
-#define CARDCHARNUM 256
-
-Card praseCard(char* pBuf);
-
-int saveCard(const Card* pcard, const char* pPath) {
+// 保存卡信息到文件（追加模式）
+int saveCard(const Card* pCard, const char* pPath) {
 	FILE* fp = NULL;
-	fp = fopen(pPath, "a");
+	fopen_s(&fp, pPath, "ab");
 	if (fp == NULL) {
 		return 0;
 	}
-
-	char StartTime[20], EndTime[20], LastTime[20];
-	timeToString(pcard->tStart,StartTime);
-	timeToString(pcard->tEnd, EndTime);
-	timeToString(pcard->tLast, LastTime);
-	fprintf(fp, "%s##%s##%d##%s##%s##%.1f##%s##%d##%.1f##%d\n",
-		pcard->aName, pcard->aPwd, pcard->nStatus, StartTime, EndTime,
-		pcard->fTotalUse, LastTime, pcard->nUseCount, pcard->fBalance, pcard->nDel);
+	fwrite(pCard, sizeof(Card), 1, fp);
 	fclose(fp);
 	return 1;
 }
 
+// 从文件读取所有卡信息
 int readCard(Card* pCard, const char* pPath) {
 	FILE* fp = NULL;
-	char aBuf[CARDCHARNUM] = { 0 };
-	int i = 0;
-	fp = fopen(pPath, "r");
-	if(fp == NULL) {
-		return 0;
-	}
-	while (fgets(aBuf, CARDCHARNUM, fp) != NULL) {
-		if(strlen(aBuf)>0){
-			pCard[i] = praseCard(aBuf);
-			i++;
-		}
-	}
-	fclose(fp);
-	return 1;
-}
-
-Card praseCard(char* pBuf) {
-	Card card;
-	const char* delim = "##";
-	char* buf = NULL;
-	char* str = NULL;
-	char flag[10][20] = { 0 };
-	int index = 0;
-	buf = pBuf;
-	while ((str = strtok(buf, delim)) != NULL) {
-		strcpy(flag[index], str);
-		index++;
-		buf = NULL;
-	}
-	strcpy(card.aName, flag[0]);
-	strcpy(card.aPwd, flag[1]);
-	card.nStatus = atoi(flag[2]);
-	card.tStart = stringToTime(flag[3]);
-	card.tEnd = stringToTime(flag[4]);
-	card.fTotalUse = atof(flag[5]);
-	card.tLast = stringToTime(flag[6]);
-	card.nUseCount = atoi(flag[7]);
-	card.fBalance = atof(flag[8]);
-	card.nDel = atoi(flag[9]);
-
-	return card;
-}
-
-int getCardCount(const char* pPath) {
-	FILE* fp = NULL;
-	char aBuf[CARDCHARNUM] = { 0 };
-	int nCount = 0;
-	fp = fopen(pPath, "r");
+	fopen_s(&fp, pPath, "rb");
 	if (fp == NULL) {
 		return 0;
 	}
-	while (fgets(aBuf, CARDCHARNUM, fp) != NULL) {
-		if (strlen(aBuf) > 0) {
-			nCount++;
-		}
+
+	// 计算记录数
+	fseek(fp, 0, SEEK_END);
+	long nSize = ftell(fp);
+	if (nSize <= 0) {
+		fclose(fp);
+		return 0;
 	}
+	long nCount = nSize / sizeof(Card);
+	fseek(fp, 0, SEEK_SET);
+
+	// 读取所有记录
+	size_t nRead = fread(pCard, sizeof(Card), (size_t)nCount, fp);
 	fclose(fp);
-	return nCount;
+	if (nRead != (size_t)nCount) {
+		return 0;
+	}
+	return 1;
 }
 
+// 获取卡记录数量
+int getCardCount(const char* pPath) {
+	FILE* fp = NULL;
+	fopen_s(&fp, pPath, "rb");
+	if (fp == NULL) {
+		return 0;
+	}
+	fseek(fp, 0, SEEK_END);
+	long nSize = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	fclose(fp);
+	return nSize / sizeof(Card);
+}
+
+// 更新指定索引的卡信息
 int updateCard(const Card* pCard, const char* pPath, int nIndex) {
-	FILE* fpIn = NULL;
-	FILE* fpOut = NULL;
-	char aBuf[CARDCHARNUM] = { 0 };
-	char tempPath[256] = { 0 };
-
-	fpIn = fopen(pPath, "r");
-	if (fpIn == NULL) {
+	FILE* fp = NULL;
+	fopen_s(&fp, pPath, "rb+");
+	if (fp == NULL) {
 		return 0;
 	}
-
-	// 生成临时文件名
-	strcpy(tempPath, pPath);
-	strcat(tempPath, ".tmp");
-	fpOut = fopen(tempPath, "w");
-	if (fpOut == NULL) {
-		fclose(fpIn);
-		return 0;
-	}
-
-	int nLine = 0;
-	while (fgets(aBuf, CARDCHARNUM, fpIn) != NULL) {
-		if (nLine == nIndex) {
-			char StartTime[20], EndTime[20], LastTime[20];
-			timeToString(pCard->tStart, StartTime);
-			timeToString(pCard->tEnd, EndTime);
-			timeToString(pCard->tLast, LastTime);
-			fprintf(fpOut, "%s##%s##%d##%s##%s##%.1f##%s##%d##%.1f##%d\n",
-				pCard->aName, pCard->aPwd, pCard->nStatus, StartTime, EndTime,
-				pCard->fTotalUse, LastTime, pCard->nUseCount, pCard->fBalance, pCard->nDel);
-		} else {
-			fprintf(fpOut, "%s", aBuf);
-		}
-		nLine++;
-	}
-
-	fclose(fpIn);
-	fclose(fpOut);
-
-	if (nLine <= nIndex) {
-		remove(tempPath);
-		return 0;
-	}
-
-	remove(pPath);
-	rename(tempPath, pPath);
+	long lPosition = nIndex * sizeof(Card);
+	fseek(fp, lPosition, SEEK_SET);
+	fwrite(pCard, sizeof(Card), 1, fp);
+	fclose(fp);
 	return 1;
 }

@@ -24,16 +24,16 @@ int main() {
 			settle();
 			break;
 		case 5:
-			printf("----------充值----------\n");
+			addMoney();
 			break;
 		case 6:
-			printf("----------退费----------\n");
+			refundMoney();
 			break;
 		case 7:
-			printf("----------查询统计----------\n");
+			statistics();
 			break;
 		case 8:
-			printf("----------注销卡----------\n");
+			annul();
 			break;
 		case 0:
 			printf("----------退出----------\n");

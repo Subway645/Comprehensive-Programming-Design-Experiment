@@ -56,4 +56,36 @@ typedef struct SettleInfo {
 	float fAmount;    //本次使用金额
 	float fBalance;   //余额
 }SettleInfo;
+
+//充值退费结构体
+typedef struct Money {
+	char aName[18];   //卡号
+	float fMoney;     //充值或退费金额
+	time_t tTime;     //充值或退费时间
+	int nStatus;      //类型（0-充值；1-退费）
+	int nDel;         //删除标志（0-未删除；1-已删除）
+}Money;
+
+//充值退费信息结构体
+typedef struct MoneyInfo {
+	char aName[18];      //卡号
+	float fMoney;       //充值或退费金额
+	float fBalance;     //余额
+	time_t tTime;       //时间
+}MoneyInfo;
+
+//注销卡信息结构体
+typedef struct AnnulInfo {
+	char aName[18];      //卡号
+	float fBalance;      //退款金额
+}AnnulInfo;
+
+//消费信息结构体（用于查询统计）
+typedef struct ConsumptionInfo {
+	char aName[18];      //卡号
+	char startDate[20];  //开始时间
+	char endDate[20];    //结束时间
+	float fTotalConsumption; //总消费额
+}ConsumptionInfo;
+
 #endif

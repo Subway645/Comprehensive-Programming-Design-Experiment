@@ -124,11 +124,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="billing_service.c" />
-    <ClCompile Include="bulling_file.c" />
+    <ClCompile Include="billing_file.c" />
     <ClCompile Include="card_file.c" />
     <ClCompile Include="card_service.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="menu.c" />
+    <ClCompile Include="money_file.c" />
     <ClCompile Include="service.c" />
     <ClCompile Include="tool.c" />
   </ItemGroup>
@@ -140,6 +141,7 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="money_file.h" />
     <ClInclude Include="service.h" />
     <ClInclude Include="tool.h" />
   </ItemGroup>
