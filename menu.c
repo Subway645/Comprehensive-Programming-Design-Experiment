@@ -11,6 +11,26 @@
 
 int getSize(const char* pInfo);
 
+// 密码复杂度验证：必须包含大写字母、小写字母、数字中的至少两类
+int validatePwd(const char* pPwd) {
+	int hasUpper = 0, hasLower = 0, hasDigit = 0;
+	while (*pPwd != '\0') {
+		if (*pPwd >= 'A' && *pPwd <= 'Z') hasUpper = 1;
+		else if (*pPwd >= 'a' && *pPwd <= 'z') hasLower = 1;
+		else if (*pPwd >= '0' && *pPwd <= '9') hasDigit = 1;
+		pPwd++;
+	}
+	int count = hasUpper + hasLower + hasDigit;
+	return (count >= 2) ? 1 : 0;
+}
+
+// 按任意键继续
+void pause() {
+	printf("\n按任意键继续...\n");
+	getchar();
+	getchar();
+}
+
 // 输出主菜单
 void outputmenu() {
 	printf("欢迎使用计费管理系统\n\
@@ -58,13 +78,16 @@ void add() {
 	}
 	printf("请输入密码：");
 
-	// 判断密码长度（1~8位）
+	// 判断密码长度（1~8位）且必须包含大写字母、小写字母、数字中的至少两类
 	while(1) {
 		scanf("%s", aPwd);
 		int nPwdSize = getSize(aPwd);
-		if (nPwdSize > 0 && nPwdSize < 9) {
+		if (nPwdSize > 0 && nPwdSize < 9 && validatePwd(aPwd)) {
 			strcpy(card.aPwd, aPwd);
 			break;
+		}
+		else if (nPwdSize > 0 && nPwdSize < 9) {
+			printf("密码必须包含大写字母、小写字母、数字中的至少两类，请重新输入：");
 		}
 		else {
 			printf("密码长度应为1~8之间，请重新输入：");

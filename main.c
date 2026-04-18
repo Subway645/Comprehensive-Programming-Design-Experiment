@@ -13,27 +13,35 @@ int main() {
 		{
 		case 1:
 			add();
+			pause();
 			break;
 		case 2:
 			query();
+			pause();
 			break;
 		case 3:
 			logon();
+			pause();
 			break;
 		case 4:
 			settle();
+			pause();
 			break;
 		case 5:
 			addMoney();
+			pause();
 			break;
 		case 6:
 			refundMoney();
+			pause();
 			break;
 		case 7:
 			statistics();
+			pause();
 			break;
 		case 8:
 			annul();
+			pause();
 			break;
 		case 0:
 			printf("----------ÍË³ö----------\n");

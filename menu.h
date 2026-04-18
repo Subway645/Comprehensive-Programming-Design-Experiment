@@ -11,4 +11,5 @@ void statistics();   //声明查询统计
 void queryCardConsumption(); //声明查询卡消费情况
 void queryTurnover();        //声明查询营业额
 void annul();        //声明注销卡
+void pause();        //声明按任意键继续
 #endif
