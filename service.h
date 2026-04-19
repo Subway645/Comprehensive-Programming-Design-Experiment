@@ -3,6 +3,7 @@
 #include "model.h"
 
 int addCardInfo(Card card);
+int checkCardExists(const char* pName);
 Card* queryCardsInfo(const char* pName, int* pIndex);
 int doLogonInfo(const char* pName, const char* pPwd, LogonInfo* pLogonInfo);
 void releaseList(void);

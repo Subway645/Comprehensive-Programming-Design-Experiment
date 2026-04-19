@@ -22,6 +22,12 @@ int addCardInfo(Card card) {
 	return addCard(card);
 }
 
+// 检查卡号是否已存在
+int checkCardExists(const char* pName) {
+	if (getCard() == 0) return 0;
+	return (queryCard(pName) != NULL) ? 1 : 0;
+}
+
 // 查询卡信息
 Card* queryCardsInfo(const char* pName, int* pIndex) {
 	return queryCards(pName, pIndex);

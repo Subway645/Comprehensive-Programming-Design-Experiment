@@ -76,6 +76,13 @@ void add() {
 			printf("卡号长度应为1~18之间，请重新输入：");
 		}
 	}
+
+	// 检查卡号是否已存在
+	if (checkCardExists(aName)) {
+		printf("该卡已经存在，开卡失败\n");
+		return;
+	}
+
 	printf("请输入密码：");
 
 	// 判断密码长度（1~8位）且必须包含大写字母、小写字母、数字中的至少两类
@@ -212,7 +219,7 @@ void settle() {
 			timeToString(info.tEnd, endTime);
 			printf("下机成功\n");
 			printf("-----下机信息如下-----\n");
-			printf("卡号\t状态\t余额\t应付金额\t开始时间\t结束时间\n");
+			printf("卡号\t状态\t余额\t应付金额\t%-20s\t%-20s\n", "开始时间", "结束时间");
 			printf("%s\t%d\t%.1f\t%.1f\t%-20s\t%-20s\n",
 				info.aName, 0, info.fBalance, info.fAmount, startTime, endTime);
 			break;
